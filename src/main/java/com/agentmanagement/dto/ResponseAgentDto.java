@@ -5,8 +5,7 @@ import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class ResponseAgentDto {
     private String agentName;
     private String message;
