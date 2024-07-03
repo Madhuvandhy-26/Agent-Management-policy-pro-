@@ -1,5 +1,6 @@
 package com.agentmanagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -29,5 +30,12 @@ public class Agent {
     private String agentContactInfo;
 
     private Date createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL )
+//    @JoinColumn(name = "territory_id", nullable = false)
+    @JsonBackReference(value = "agentDetails")
+    private Territory territoryRef;
+
+
 
 }

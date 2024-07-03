@@ -11,5 +11,6 @@ public class RequestCreateAgentDto {
     private String agentName;
     private String agentContactInfo;
     private Date createdAt;
+    private int territoryRefId;
 
 }

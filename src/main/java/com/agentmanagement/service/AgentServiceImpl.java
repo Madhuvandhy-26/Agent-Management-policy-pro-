@@ -1,8 +1,6 @@
 package com.agentmanagement.service;
 
-import com.agentmanagement.dto.RequestCreateAgentDto;
-import com.agentmanagement.dto.ResponseAgentDto;
-import com.agentmanagement.dto.ResponseListAgentDto;
+import com.agentmanagement.dto.*;
 import com.agentmanagement.entity.Agent;
 import com.agentmanagement.exception.AgentException;
 import com.agentmanagement.repo.AgentRepo;
@@ -13,6 +11,7 @@ import org.modelmapper.ModelMapper;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -61,6 +60,48 @@ public class AgentServiceImpl implements AgentService {
                                             .collect(Collectors.toList());
 
         return responseListAgentDtos;
+    }
+
+    @Override
+    public ResponseDataAgentDto getAgentByIdService(int agentId) throws AgentException {
+        Optional<Agent> agentById = agentRepo.findById(agentId);
+        ResponseDataAgentDto responseDataAgentDto = new ResponseDataAgentDto();
+        if(agentById.isPresent()){
+            responseDataAgentDto =modelMapper.map( agentById, ResponseDataAgentDto.class);
+        }else{
+            throw new AgentException("Please Enter the valid ID");
+        }
+
+        return responseDataAgentDto;
+    }
+
+    @Override
+    public ResponseAgentDto updateAgentService(int agentId, RequestUpdateAgentDto updateAgentDto) throws AgentException {
+        Agent agent = agentRepo.findById(agentId)
+                .orElseThrow(() -> new AgentException("Agent not found"));
+
+        agent.setAgentContactInfo(updateAgentDto.getAgentContactInfo());
+        agentRepo.save(agent);
+        ResponseAgentDto response = new ResponseAgentDto();
+        response.setAgentName(agent.getAgentName());
+        response.setMessage("Updated successfully");
+        return response;
+    }
+
+    @Override
+    public ResponseAgentDto deleteAgentService(int agentId) throws AgentException {
+        Agent existingAgent = agentRepo.findById(agentId).get();
+        ResponseAgentDto response = new ResponseAgentDto();
+        if(existingAgent != null){
+           agentRepo.deleteById(existingAgent.getAgentId());
+           response.setAgentName(existingAgent.getAgentName());
+           response.setMessage("Agent has been Deleted successfully");
+           return response;
+
+        }else {
+            throw new AgentException("Agent is not found");
+        }
+
     }
 
 }
